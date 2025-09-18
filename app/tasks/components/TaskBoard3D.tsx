@@ -80,7 +80,6 @@ const StatusColumn = ({ status, position, color, label }: {
         color={color}
         anchorX="center"
         anchorY="middle"
-        font-weight="bold"
       >
         {label}
       </Text>
