@@ -15,10 +15,11 @@ const Navigation = () => {
   }, [])
 
   const navItems = [
-    { name: 'בית', href: '#home' },
-    { name: 'פרויקטים', href: '#projects' },
-    { name: 'כישורים', href: '#skills' },
-    { name: 'צור קשר', href: '#contact' },
+    { name: 'בית', href: '/' },
+    { name: 'פרויקטים', href: '/#projects' },
+    { name: 'כישורים', href: '/#skills' },
+    { name: 'משימות 3D', href: '/tasks' },
+    { name: 'צור קשר', href: '/#contact' },
   ]
 
   return (

@@ -59,21 +59,32 @@ const Hero = () => {
           transition={{ duration: 1, delay: 0.6 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <motion.button
+          <motion.a
+            href="#projects"
             whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(0, 112, 243, 0.5)" }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full text-white font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
+            className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full text-white font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 text-center"
           >
             צפה בפרויקטים
-          </motion.button>
+          </motion.a>
           
-          <motion.button
+          <motion.a
+            href="/tasks"
+            whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(16, 185, 129, 0.5)" }}
+            whileTap={{ scale: 0.95 }}
+            className="px-8 py-4 bg-gradient-to-r from-green-500 to-teal-600 rounded-full text-white font-semibold hover:from-green-600 hover:to-teal-700 transition-all duration-300 text-center"
+          >
+            🎯 ניהול משימות 3D
+          </motion.a>
+          
+          <motion.a
+            href="#contact"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 py-4 border-2 border-white/30 rounded-full text-white font-semibold hover:border-white/50 hover:bg-white/10 transition-all duration-300"
+            className="px-8 py-4 border-2 border-white/30 rounded-full text-white font-semibold hover:border-white/50 hover:bg-white/10 transition-all duration-300 text-center"
           >
             צור קשר
-          </motion.button>
+          </motion.a>
         </motion.div>
       </div>
 
