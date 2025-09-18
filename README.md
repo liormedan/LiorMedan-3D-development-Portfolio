@@ -82,6 +82,32 @@ npm run build
 npm start
 \`\`\`
 
+## 🚀 פרסום ב-Vercel
+
+### דרך הממשק של Vercel:
+1. היכנס ל-[Vercel](https://vercel.com)
+2. חבר את חשבון GitHub שלך
+3. בחר את הריפוזיטורי: \`LiorMedan-3D-development-Portfolio\`
+4. Vercel יזהה אוטומטית שזה פרויקט Next.js
+5. לחץ Deploy!
+
+### דרך CLI:
+\`\`\`bash
+# התקן Vercel CLI
+npm i -g vercel
+
+# התחבר לחשבון
+vercel login
+
+# פרסם את הפרויקט
+vercel --prod
+\`\`\`
+
+### הגדרות Environment Variables ב-Vercel:
+1. לך ל-Dashboard של הפרויקט ב-Vercel
+2. Settings → Environment Variables
+3. הוסף את המשתנים מקובץ \`.env.example\`
+
 ## 🤝 תרומה
 
 מוזמנים לתרום לפרויקט! פתחו issue או שלחו pull request.
