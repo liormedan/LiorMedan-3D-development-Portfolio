@@ -39,7 +39,10 @@
   - API: `app/api/checkout/route.ts` יוצר Checkout Session לפי פריטי סל
   - עמוד סל: `app/cart/page.tsx` עם כפתור "לתשלום ב‑Stripe"
   - קובץ סביבה: `STRIPE_SECRET_KEY` ב-`.env.example`, שימוש ב-`NEXT_PUBLIC_SITE_URL` לבניית כתובות חזרה
-- [ ] עמוד Checkout + אישור הזמנה (Success/Cancel)
+- [x] עמוד Checkout + אישור הזמנה (Success/Cancel)
+  - עמודי אישור/ביטול: `/checkout/success` (כולל סיכום הזמנה) ו-`/checkout/cancel`
+  - ניקוי הסל בהצלחה: רכיב לקוח `app/checkout/ClearCartOnSuccess.tsx`
+  - עדכון המסלול: הפניית Stripe לכתובות החדשות ב-API
 - [ ] תמחור מטבע/מע״מ/חשבונית (פשטני בשלב ראשון)
 
 ### מודלים ותצוגה (P1)

@@ -50,8 +50,8 @@ export async function POST(req: Request) {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items,
-      success_url: `${base}/cart?status=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${base}/cart?status=cancel`,
+      success_url: `${base}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${base}/checkout/cancel`,
     })
 
     return NextResponse.json({ url: session.url })
@@ -60,4 +60,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: e?.message || 'Internal error' }, { status: 500 })
   }
 }
-
