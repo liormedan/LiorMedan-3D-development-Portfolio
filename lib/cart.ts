@@ -13,7 +13,7 @@ type CartState = {
   count: () => number
 }
 
-export const useCart = create<CartState>()(
+export const useCart = create<CartState>(
   persist(
     (set, get) => ({
       items: [],

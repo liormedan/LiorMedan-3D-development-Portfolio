@@ -3,21 +3,23 @@
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { useCart } from '@/lib/cart'
-import { products } from '@/lib/products'
+import { products, type Product } from '@/lib/products'
 import { addVat, formatCurrency, getVatPercent } from '@/lib/pricing'
 
 export default function CartPage() {
   const { items, remove, clear } = useCart()
   const [loading, setLoading] = useState(false)
 
-  const rows = useMemo(() => {
-    return items
-      .map((i) => {
+  type Row = Product & { qty: number; total: number }
+  const rows: Row[] = useMemo(() => {
+    const mapped = items
+      .map((i: { productId: string; qty: number }) => {
         const p = products.find((x) => x.id === i.productId)
         if (!p) return null
         return { ...p, qty: i.qty, total: p.price.amount * i.qty }
       })
-      .filter(Boolean) as Array<ReturnType<typeof products[number]> & { qty: number; total: number }>
+      .filter((r): r is Row => !!r)
+    return mapped
   }, [items])
 
   const subtotal = rows.reduce((acc, r) => acc + r.total, 0)
@@ -27,19 +29,8 @@ export default function CartPage() {
   const checkout = async () => {
     if (rows.length === 0 || loading) return
     setLoading(true)
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
-      })
-      const data = await res.json()
-      if (data?.url) window.location.href = data.url
-      else setLoading(false)
-    } catch (e) {
-      console.error(e)
-      setLoading(false)
-    }
+    // דמו: מעבר לעמוד הצלחה ללא תשלום אמיתי
+    window.location.href = '/checkout/success?status=demo'
   }
 
   return (
@@ -89,7 +80,7 @@ export default function CartPage() {
                 disabled={loading}
                 className="px-4 py-2 rounded-md bg-purple-600 hover:bg-purple-500 disabled:opacity-50"
               >
-                {loading ? 'מפנה לתשלום…' : 'לתשלום ב‑Stripe'}
+                {loading ? 'מעביר לדמו…' : 'דמו: המשך לתוצאה'}
               </button>
             </div>
           </div>

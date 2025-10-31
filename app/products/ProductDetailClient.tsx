@@ -1,6 +1,6 @@
 "use client"
 
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { Environment, OrbitControls, Center, useGLTF, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { useRef, useState, Suspense } from 'react'
@@ -23,20 +23,7 @@ function SpinningProduct() {
 
 function ProductModel({ path }: { path: string }) {
   const group = useRef<THREE.Group>(null)
-  const gl = useThree((s) => s.gl)
-  const gltf = useGLTF(path, (loader: any) => {
-    import('three/examples/jsm/loaders/DRACOLoader.js').then(({ DRACOLoader }) => {
-      const draco = new DRACOLoader()
-      draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/')
-      loader.setDRACOLoader(draco)
-    })
-    import('three/examples/jsm/loaders/KTX2Loader.js').then(({ KTX2Loader }) => {
-      const ktx2 = new KTX2Loader()
-      ktx2.setTranscoderPath('https://unpkg.com/three@0.159.0/examples/jsm/libs/basis/')
-      ktx2.detectSupport(gl)
-      loader.setKTX2Loader(ktx2)
-    })
-  })
+  const gltf = useGLTF(path)
   useFrame((_, dt) => {
     if (group.current) group.current.rotation.y += dt * 0.2
   })
@@ -87,7 +74,8 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           URL.revokeObjectURL(url)
           setExporting('none')
         },
-        { binary }
+        () => setExporting('none'),
+        { binary } as any
       )
     } catch (e) {
       console.error(e)
