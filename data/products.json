@@ -1,0 +1,24 @@
+[
+  {
+    "id": "demo-cube",
+    "slug": "demo-cube",
+    "name": "דגם דמו – קובייה",
+    "description": "דגם בסיסי לצורכי הדגמה. ניתן להחליף במודל GLB/GLTF אמיתי.",
+    "price": { "amount": 0, "currency": "ILS" },
+    "thumbnail": "/images/demo-cube.png",
+    "modelPath": "",
+    "tags": ["demo", "basic"],
+    "downloads": []
+  },
+  {
+    "id": "future-chair",
+    "slug": "future-chair",
+    "name": "כיסא עתידני",
+    "description": "מודל כיסא עם עיצוב מינימליסטי. מותאם לתצוגה אינטרנטית.",
+    "price": { "amount": 99, "currency": "ILS" },
+    "thumbnail": "/images/future-chair.jpg",
+    "modelPath": "",
+    "tags": ["chair", "interior"],
+    "downloads": []
+  }
+]
