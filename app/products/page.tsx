@@ -199,6 +199,18 @@ export default function ProductsPage() {
                 selected.id === p.id ? 'ring-1 ring-blue-500' : ''
               }`}
             >
+              <div className="mb-3 rounded overflow-hidden border border-zinc-800 bg-black">
+                <img
+                  src={p.thumbnail || '/images/placeholder-thumb.svg'}
+                  alt={p.name}
+                  className="w-full h-32 object-cover"
+                  onError={(e) => {
+                    const img = e.currentTarget as HTMLImageElement
+                    if (img.src.endsWith('placeholder-thumb.svg')) return
+                    img.src = '/images/placeholder-thumb.svg'
+                  }}
+                />
+              </div>
               <button onClick={() => setSelected(p)} className="block w-full text-left">
                 <div className="text-base font-medium mb-1 truncate">{p.name}</div>
                 <div className="text-sm text-zinc-400 truncate">

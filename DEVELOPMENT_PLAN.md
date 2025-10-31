@@ -56,9 +56,10 @@
   - `Environment` ל-IBL, `ACESFilmicToneMapping`, `SRGBColorSpace`, ו-traverse להפעלת צללים/`envMapIntensity`
 - [x] פקד מצלמה נוח (OrbitControls) + מגבלות זום/סיבוב
   - `enableDamping`, מגבלות `minDistance`/`maxDistance`, ו-`min/maxPolarAngle`
-- [~] יצירת תמונות תצוגה (Thumbnails)
-  - הוספת כפתור יצירה בצד לקוח: צילום Canvas כ-PNG בעמוד מוצר
-  - בהמשך: רנדר בצד שרת עם headless-gl לטרום‑עיבוד
+ - [x] יצירת תמונות תצוגה (Thumbnails)
+   - כפתור יצירת תמונה בצד לקוח: צילום Canvas כ‑PNG + ניסיון העתקה ללוח
+   - גריד מוצרים מציג `thumbnail` אם קיים, עם נפילה ל‑`/images/placeholder-thumb.svg`
+   - בהמשך: רנדר בצד שרת עם headless-gl לטרום‑עיבוד (נותר כ‑Next step)
 
 ### ביצועים (P1)
 - [ ] דחיסת דגמים (DRACO/KTX2) + טעינה עצלה (lazy)

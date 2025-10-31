@@ -141,20 +141,30 @@ export default function ProductDetailClient({ product }: { product: Product }) {
         >
           {exporting === 'glb' ? 'מייצא…' : 'ייצוא כ‑GLB'}
         </button>
-        <button
-          onClick={() => {
-            const cnv = document.querySelector('#product-detail-canvas canvas') as HTMLCanvasElement | null
-            if (!cnv) return
-            const url = cnv.toDataURL('image/png')
-            const a = document.createElement('a')
-            a.href = url
-            a.download = `${product.slug || 'product'}-thumb.png`
-            a.click()
-          }}
-          className="px-3 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 text-sm"
-        >
-          יצירת Thumbnail
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={async () => {
+              const cnv = document.querySelector('#product-detail-canvas canvas') as HTMLCanvasElement | null
+              if (!cnv) return
+              const url = cnv.toDataURL('image/png')
+              try {
+                // Try copy to clipboard as image
+                if (navigator.clipboard && (window as any).ClipboardItem) {
+                  const data = await (await fetch(url)).blob()
+                  const item = new (window as any).ClipboardItem({ 'image/png': data })
+                  await navigator.clipboard.write([item])
+                }
+              } catch {}
+              const a = document.createElement('a')
+              a.href = url
+              a.download = `${product.slug || 'product'}-thumb.png`
+              a.click()
+            }}
+            className="px-3 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 text-sm"
+          >
+            יצירת Thumbnail
+          </button>
+        </div>
       </div>
 
       {product.description && (
