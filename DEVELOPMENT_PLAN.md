@@ -27,7 +27,11 @@
 - [x] סל קניות בצד לקוח (zustand) עם שמירה ב-`localStorage`
   - נוספה התמדה עם `zustand/middleware` (`persist`) ב-`lib/cart.ts` תחת המפתח `cart-v1`
   - שמירת `items` ל-`localStorage` וטעינה אוטומטית בהידרציה בצד לקוח
-- [ ] ייצוא/הורדה: הורדת הדגם הספציפי של המוצר (GLTF/GLB); תמיכה ב-DRACO בהמשך
+- [x] ייצוא/הורדה: הורדת הדגם הספציפי של המוצר (GLTF/GLB); תמיכה ב-DRACO בהמשך
+  - כפתורי הורדה/ייצוא ב-`/products` וב-`/products/[slug]`:
+    - הורדת קובץ מקור אם מוגדר `modelPath`
+    - ייצוא כ‑GLTF (JSON) ו‑GLB (Binary) באמצעות `GLTFExporter`
+  - DRACO: יתווסף בשלב הבא לצרכי טעינה/דחיסה; נדרש אינטגרציית דקודר בלואדר או Preprocess
 
 ### תשלום וקופה (P0-P1)
 - [ ] אינטגרציית תשלום (Stripe Checkout/Payment Links) – Sandbox תחילה

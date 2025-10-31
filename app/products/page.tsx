@@ -49,36 +49,44 @@ for (const p of products) {
 
 function ProductViewer({ product }: { product: Product }) {
   const sceneRef = useRef<THREE.Scene | null>(null)
-  const [exporting, setExporting] = useState(false)
+  const [exporting, setExporting] = useState<'none' | 'gltf' | 'glb'>('none')
 
   const onCreated = useCallback(({ scene }: { scene: THREE.Scene }) => {
     sceneRef.current = scene
   }, [])
 
-  const handleExport = async () => {
-    if (!sceneRef.current || exporting) return
-    setExporting(true)
+  const doExport = async (binary: boolean) => {
+    if (!sceneRef.current || exporting !== 'none') return
+    setExporting(binary ? 'glb' : 'gltf')
     try {
       const { GLTFExporter } = await import('three/examples/jsm/exporters/GLTFExporter.js')
       const exporter = new GLTFExporter()
       exporter.parse(
         sceneRef.current,
         (gltf) => {
-          const json = JSON.stringify(gltf)
-          const blob = new Blob([json], { type: 'model/gltf+json' })
+          let blob: Blob
+          let filename: string
+          if (binary) {
+            blob = new Blob([gltf as ArrayBuffer], { type: 'model/gltf-binary' })
+            filename = `${product.slug || 'product'}.glb`
+          } else {
+            const json = JSON.stringify(gltf)
+            blob = new Blob([json], { type: 'model/gltf+json' })
+            filename = `${product.slug || 'product'}.gltf`
+          }
           const url = URL.createObjectURL(blob)
           const a = document.createElement('a')
           a.href = url
-          a.download = `${product.slug || 'product'}.gltf`
+          a.download = filename
           a.click()
           URL.revokeObjectURL(url)
-          setExporting(false)
+          setExporting('none')
         },
-        { binary: false }
+        { binary }
       )
     } catch (e) {
       console.error(e)
-      setExporting(false)
+      setExporting('none')
     }
   }
 
@@ -97,11 +105,18 @@ function ProductViewer({ product }: { product: Product }) {
             </a>
           )}
           <button
-            onClick={handleExport}
-            disabled={exporting}
+            onClick={() => doExport(false)}
+            disabled={exporting !== 'none'}
             className="px-3 py-2 rounded-md bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-sm"
           >
-            {exporting ? 'מייצא…' : 'ייצוא סצנה כ‑GLTF'}
+            {exporting === 'gltf' ? 'מייצא…' : 'ייצוא כ‑GLTF'}
+          </button>
+          <button
+            onClick={() => doExport(true)}
+            disabled={exporting !== 'none'}
+            className="px-3 py-2 rounded-md bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-sm"
+          >
+            {exporting === 'glb' ? 'מייצא…' : 'ייצוא כ‑GLB'}
           </button>
         </div>
       </div>

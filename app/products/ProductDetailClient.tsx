@@ -3,7 +3,7 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Environment, OrbitControls, Center, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { type Product } from '@/lib/products'
 import { useCart } from '@/lib/cart'
@@ -39,6 +39,48 @@ function ProductModel({ path }: { path: string }) {
 
 export default function ProductDetailClient({ product }: { product: Product }) {
   const add = useCart((s) => s.add)
+  const [exporting, setExporting] = useState<'none' | 'gltf' | 'glb'>('none')
+
+  const exportScene = async (binary: boolean) => {
+    if (exporting !== 'none') return
+    setExporting(binary ? 'glb' : 'gltf')
+    try {
+      const { GLTFExporter } = await import('three/examples/jsm/exporters/GLTFExporter.js')
+      const exporter = new GLTFExporter()
+      const scene = (document.querySelector('#product-detail-canvas') as any)?._three?.scene
+      // Fallback: try to find first canvas' scene via React Three Fiber internal state
+      const scenes = (window as any).__r3f?
+        Array.from((window as any).__r3f.roots.values()).map((r: any) => r.store.getState().get().scene) : []
+      const targetScene = scene || scenes?.[0]
+      if (!targetScene) throw new Error('Scene not found for export')
+      exporter.parse(
+        targetScene,
+        (gltf) => {
+          let blob: Blob
+          let filename: string
+          if (binary) {
+            blob = new Blob([gltf as ArrayBuffer], { type: 'model/gltf-binary' })
+            filename = `${product.slug || 'product'}.glb`
+          } else {
+            const json = JSON.stringify(gltf)
+            blob = new Blob([json], { type: 'model/gltf+json' })
+            filename = `${product.slug || 'product'}.gltf`
+          }
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = filename
+          a.click()
+          URL.revokeObjectURL(url)
+          setExporting('none')
+        },
+        { binary }
+      )
+    } catch (e) {
+      console.error(e)
+      setExporting('none')
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -61,7 +103,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
       </div>
 
       <div className="w-full aspect-[16/9] rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900">
-        <Canvas shadows camera={{ position: [3, 2, 4], fov: 50 }}>
+        <Canvas id="product-detail-canvas" shadows camera={{ position: [3, 2, 4], fov: 50 }}>
           <color attach="background" args={[0.05, 0.05, 0.06]} />
           <ambientLight intensity={0.4} />
           <directionalLight position={[5, 5, 5]} intensity={1.2} castShadow />
@@ -75,6 +117,28 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           <Environment preset="city" />
           <OrbitControls makeDefault />
         </Canvas>
+      </div>
+
+      <div className="flex items-center gap-2 justify-end">
+        {product.modelPath && (
+          <a href={product.modelPath} download className="px-3 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 text-sm">
+            הורדת קובץ מקור
+          </a>
+        )}
+        <button
+          onClick={() => exportScene(false)}
+          disabled={exporting !== 'none'}
+          className="px-3 py-2 rounded-md bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-sm"
+        >
+          {exporting === 'gltf' ? 'מייצא…' : 'ייצוא כ‑GLTF'}
+        </button>
+        <button
+          onClick={() => exportScene(true)}
+          disabled={exporting !== 'none'}
+          className="px-3 py-2 rounded-md bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-sm"
+        >
+          {exporting === 'glb' ? 'מייצא…' : 'ייצוא כ‑GLB'}
+        </button>
       </div>
 
       {product.description && (
@@ -91,4 +155,3 @@ export default function ProductDetailClient({ product }: { product: Product }) {
     </div>
   )
 }
-
