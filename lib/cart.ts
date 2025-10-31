@@ -1,7 +1,7 @@
 "use client"
 
-import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import create from 'zustand'
+import { persist } from 'zustand/middleware'
 
 type CartItem = { productId: string; qty: number }
 
@@ -35,9 +35,18 @@ export const useCart = create<CartState>()(
     {
       name: 'cart-v1',
       version: 1,
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ items: state.items }),
-    }
+      // Compatible storage without createJSONStorage; works across zustand versions
+      // @ts-ignore
+      storage: typeof window !== 'undefined'
+        ? {
+            getItem: (name: string) => localStorage.getItem(name),
+            setItem: (name: string, value: string) => localStorage.setItem(name, value),
+            removeItem: (name: string) => localStorage.removeItem(name),
+          }
+        : undefined,
+      // keep only items
+      // @ts-ignore
+      partialize: (state: CartState) => ({ items: state.items }),
+    } as any
   )
 )
-

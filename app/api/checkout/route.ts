@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       line_items.push({
         quantity: Math.max(1, Math.floor(it.qty || 1)),
         price_data: {
-          currency: p.price.currency.toLowerCase() as Stripe.Currency,
+          currency: p.price.currency.toLowerCase() as any,
           unit_amount: amount,
           product_data: {
             name: p.name,
