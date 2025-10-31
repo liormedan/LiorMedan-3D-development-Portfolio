@@ -361,7 +361,7 @@ export default function AudioVisualizerPage() {
               <meshStandardMaterial color="#111" />
             </mesh>
             {useBloom && (
-              <EffectComposer>
+              <EffectComposer disableNormalPass>
                 <Bloom intensity={0.6} luminanceThreshold={0.2} luminanceSmoothing={0.9} mipmapBlur radius={0.7} />
               </EffectComposer>
             )}
