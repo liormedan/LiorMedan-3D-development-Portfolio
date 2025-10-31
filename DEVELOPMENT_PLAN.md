@@ -70,8 +70,10 @@
   - Tone mapping: `ACESFilmic` ו‑`sRGB` ל‑IBL יעיל; המלצה: הפחתת polycount במודלים לפני העלאה
 
 ### תוכן/SEO (P1)
-- [ ] מטא־דאטה נקי בעברית ובאנגלית (תיקון `app/layout.tsx` – כרגע יש ג׳יבריש)
-- [ ] Open Graph לטובת שיתוף עמודי מוצר
+- [x] מטא־דאטה נקי בעברית ובאנגלית (תיקון `app/layout.tsx` – כרגע יש ג׳יבריש)
+  - כותרת/תיאור דו־לשוני, Keywords, ו‑OpenGraph/Twitter ברירת מחדל על בסיס `NEXT_PUBLIC_SITE_URL`
+- [x] Open Graph לטובת שיתוף עמודי מוצר
+  - `generateMetadata` ב־`/products/[slug]` כולל כותרת/תיאור ותמונת OG מתוך `thumbnail` או פלייסהולדר
 
 ### ניהול תוכן (P2)
 - [ ] פאנל ניהול מוצרים בסיסי (CRUD מקומי/קובץ JSON/DB קלילה)

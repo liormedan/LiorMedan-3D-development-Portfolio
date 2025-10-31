@@ -1,28 +1,53 @@
 import './globals.css'
 import type { Metadata } from 'next'
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
 export const metadata: Metadata = {
-  title: 'לירן מדן | תיק עבודות 3D Portfolio',
-  description: 'מפתח ומעצב חוויות דיגיטליות תלת-ממדיות מרהיבות עם React, Three.js ו-Next.js. תיק עבודות אינטראקטיבי עם דוגמאות מתקדמות',
-  keywords: ['React', 'Three.js', 'Next.js', '3D', 'WebGL', 'Portfolio', 'Frontend Developer', 'תיק עבודות'],
-  authors: [{ name: 'לירן מדן' }],
-  creator: 'לירן מדן',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: 'חנות 3D | 3D Store',
+    template: '%s | 3D Store',
+  },
+  description:
+    'חנות 3D ותצוגות אינטראקטיביות: מודלים להדמיה/הורדה, הדמיית אודיו, וסייר קבצים בתלת־ממד. Built with Next.js, React Three Fiber, Three.js.',
+  keywords: [
+    '3D',
+    'GLTF',
+    'GLB',
+    'Three.js',
+    'React Three Fiber',
+    'Next.js',
+    'Virtual Store',
+    'חנות 3D',
+  ],
+  authors: [{ name: 'Lior Medan' }],
+  creator: 'Lior Medan',
   openGraph: {
-    title: 'לירן מדן | תיק עבודות 3D Portfolio',
-    description: 'מפתח ומעצב חוויות דיגיטליות תלת-ממדיות מרהיבות',
     type: 'website',
     locale: 'he_IL',
-    siteName: 'תיק עבודות 3D',
+    url: siteUrl,
+    siteName: '3D Store',
+    title: '3D Store – חנות ותצוגות תלת־ממד',
+    description:
+      'מודלים בתלת־ממד להמחשה/הורדה, הדמיית גלי קול וסייר קבצים 3D. Next.js + Three.js.',
+    images: [
+      {
+        url: '/images/placeholder-thumb.svg',
+        width: 1200,
+        height: 630,
+        alt: '3D Store',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'לירן מדן | תיק עבודות 3D Portfolio',
-    description: 'מפתח ומעצב חוויות דיגיטליות תלת-ממדיות מרהיבות',
+    site: '@liormedan',
+    title: '3D Store – חנות ותצוגות תלת־ממד',
+    description: 'מודלים 3D, הדמיית אודיו, וסייר קבצים 3D.',
+    images: ['/images/placeholder-thumb.svg'],
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 }
 
 export default function RootLayout({
@@ -38,3 +63,4 @@ export default function RootLayout({
     </html>
   )
 }
+
