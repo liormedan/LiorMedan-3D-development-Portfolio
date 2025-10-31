@@ -50,10 +50,15 @@
   - עמוד הצלחה: פירוט כולל/לפני מע"מ + כפתור הדפסה/שמירת PDF
 
 ### מודלים ותצוגה (P1)
-- [ ] טעינת מודלים עם `GLTFLoader` + `Suspense`
-- [ ] תאימות טקסטורות/חומרים בסיסית (PBR)
-- [ ] פקד מצלמה נוח (OrbitControls) + מגבלות זום/סיבוב
-- [ ] יצירת תמונות תצוגה (Thumbnails) – אופציונלי: רנדר סרבר/טרום־עיבוד
+- [x] טעינת מודלים עם `GLTFLoader` + `Suspense`
+  - שימוש ב-`useGLTF` (GLTFLoader תחת המכסה) + `Suspense` עם fallback ב-Canvas
+- [x] תאימות טקסטורות/חומרים בסיסית (PBR)
+  - `Environment` ל-IBL, `ACESFilmicToneMapping`, `SRGBColorSpace`, ו-traverse להפעלת צללים/`envMapIntensity`
+- [x] פקד מצלמה נוח (OrbitControls) + מגבלות זום/סיבוב
+  - `enableDamping`, מגבלות `minDistance`/`maxDistance`, ו-`min/maxPolarAngle`
+- [~] יצירת תמונות תצוגה (Thumbnails)
+  - הוספת כפתור יצירה בצד לקוח: צילום Canvas כ-PNG בעמוד מוצר
+  - בהמשך: רנדר בצד שרת עם headless-gl לטרום‑עיבוד
 
 ### ביצועים (P1)
 - [ ] דחיסת דגמים (DRACO/KTX2) + טעינה עצלה (lazy)

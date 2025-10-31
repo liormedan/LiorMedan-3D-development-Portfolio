@@ -1,9 +1,9 @@
 "use client"
 
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Environment, useGLTF, Center } from '@react-three/drei'
+import { OrbitControls, Environment, useGLTF, Center, Html } from '@react-three/drei'
 import * as THREE from 'three'
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, Suspense } from 'react'
 import Link from 'next/link'
 import { products, type Product } from '@/lib/products'
 
@@ -25,6 +25,24 @@ function ProductModel({ path }: { path: string }) {
   const gltf = useGLTF(path)
   useFrame((_, dt) => {
     if (group.current) group.current.rotation.y += dt * 0.2
+  })
+  // Basic PBR & shadow compatibility
+  const scene = gltf.scene
+  scene.traverse((obj: THREE.Object3D) => {
+    const mesh = obj as THREE.Mesh
+    if ((mesh as any).isMesh) {
+      mesh.castShadow = true
+      mesh.receiveShadow = true
+      const mat = (mesh as any).material as THREE.Material | THREE.Material[] | undefined
+      const apply = (m: any) => {
+        if (!m) return
+        if ('envMapIntensity' in m) (m as any).envMapIntensity = 1.0
+        if ('metalness' in m && typeof m.metalness === 'number') m.metalness = m.metalness
+        if ('roughness' in m && typeof m.roughness === 'number') m.roughness = m.roughness
+      }
+      if (Array.isArray(mat)) mat.forEach(apply)
+      else apply(mat)
+    }
   })
   return (
     <group ref={group}>
@@ -51,8 +69,11 @@ function ProductViewer({ product }: { product: Product }) {
   const sceneRef = useRef<THREE.Scene | null>(null)
   const [exporting, setExporting] = useState<'none' | 'gltf' | 'glb'>('none')
 
-  const onCreated = useCallback(({ scene }: { scene: THREE.Scene }) => {
+  const onCreated = useCallback(({ scene, gl }: { scene: THREE.Scene; gl: THREE.WebGLRenderer }) => {
     sceneRef.current = scene
+    gl.outputColorSpace = THREE.SRGBColorSpace
+    gl.toneMapping = THREE.ACESFilmicToneMapping
+    gl.toneMappingExposure = 1
   }, [])
 
   const doExport = async (binary: boolean) => {
@@ -121,29 +142,35 @@ function ProductViewer({ product }: { product: Product }) {
         </div>
       </div>
       <div className="w-full aspect-[16/9] rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900">
-        <Canvas shadows camera={{ position: [3, 2, 4], fov: 50 }} onCreated={onCreated}>
-          <color attach="background" args={[0.05, 0.05, 0.06]} />
-          <ambientLight intensity={0.4} />
-          <directionalLight
-            position={[5, 5, 5]}
-            intensity={1.2}
-            castShadow
-            shadow-mapSize-width={1024}
-            shadow-mapSize-height={1024}
-          />
-          <group position={[0, 0.5, 0]}>
-            {product.modelPath ? (
-              <ProductModel path={product.modelPath} />
-            ) : (
-              <SpinningProduct />
-            )}
-          </group>
-          <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, -0.01, 0]}>
-            <planeGeometry args={[20, 20]} />
-            <shadowMaterial opacity={0.2} />
-          </mesh>
-          <Environment preset="city" />
-          <OrbitControls makeDefault />
+        <Canvas
+          shadows
+          camera={{ position: [3, 2, 4], fov: 50 }}
+          onCreated={onCreated}
+        >
+          <Suspense fallback={<Html center style={{ color: '#cbd5e1' }}>טוען מודל…</Html>}>
+            <color attach="background" args={[0.05, 0.05, 0.06]} />
+            <ambientLight intensity={0.5} />
+            <directionalLight
+              position={[5, 5, 5]}
+              intensity={1.2}
+              castShadow
+              shadow-mapSize-width={1024}
+              shadow-mapSize-height={1024}
+            />
+            <group position={[0, 0.5, 0]}>
+              {product.modelPath ? (
+                <ProductModel path={product.modelPath} />
+              ) : (
+                <SpinningProduct />
+              )}
+            </group>
+            <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, -0.01, 0]}>
+              <planeGeometry args={[20, 20]} />
+              <shadowMaterial opacity={0.2} />
+            </mesh>
+            <Environment preset="city" />
+            <OrbitControls makeDefault enableDamping minDistance={1.2} maxDistance={10} minPolarAngle={0.2} maxPolarAngle={Math.PI / 2} />
+          </Suspense>
         </Canvas>
       </div>
     </div>

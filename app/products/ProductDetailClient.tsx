@@ -1,9 +1,9 @@
 "use client"
 
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Environment, OrbitControls, Center, useGLTF } from '@react-three/drei'
+import { Environment, OrbitControls, Center, useGLTF, Html } from '@react-three/drei'
 import * as THREE from 'three'
-import { useRef, useState } from 'react'
+import { useRef, useState, Suspense } from 'react'
 import Link from 'next/link'
 import { type Product } from '@/lib/products'
 import { useCart } from '@/lib/cart'
@@ -104,18 +104,20 @@ export default function ProductDetailClient({ product }: { product: Product }) {
 
       <div className="w-full aspect-[16/9] rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900">
         <Canvas id="product-detail-canvas" shadows camera={{ position: [3, 2, 4], fov: 50 }}>
-          <color attach="background" args={[0.05, 0.05, 0.06]} />
-          <ambientLight intensity={0.4} />
-          <directionalLight position={[5, 5, 5]} intensity={1.2} castShadow />
-          <group position={[0, 0.5, 0]}>
-            {product.modelPath ? <ProductModel path={product.modelPath} /> : <SpinningProduct />}
-          </group>
-          <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, -0.01, 0]}>
-            <planeGeometry args={[20, 20]} />
-            <shadowMaterial opacity={0.2} />
-          </mesh>
-          <Environment preset="city" />
-          <OrbitControls makeDefault />
+          <Suspense fallback={<Html center style={{ color: '#cbd5e1' }}>טוען מודל…</Html>}>
+            <color attach="background" args={[0.05, 0.05, 0.06]} />
+            <ambientLight intensity={0.5} />
+            <directionalLight position={[5, 5, 5]} intensity={1.2} castShadow />
+            <group position={[0, 0.5, 0]}>
+              {product.modelPath ? <ProductModel path={product.modelPath} /> : <SpinningProduct />}
+            </group>
+            <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, -0.01, 0]}>
+              <planeGeometry args={[20, 20]} />
+              <shadowMaterial opacity={0.2} />
+            </mesh>
+            <Environment preset="city" />
+            <OrbitControls makeDefault enableDamping minDistance={1.2} maxDistance={10} minPolarAngle={0.2} maxPolarAngle={Math.PI / 2} />
+          </Suspense>
         </Canvas>
       </div>
 
@@ -138,6 +140,20 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           className="px-3 py-2 rounded-md bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-sm"
         >
           {exporting === 'glb' ? 'מייצא…' : 'ייצוא כ‑GLB'}
+        </button>
+        <button
+          onClick={() => {
+            const cnv = document.querySelector('#product-detail-canvas canvas') as HTMLCanvasElement | null
+            if (!cnv) return
+            const url = cnv.toDataURL('image/png')
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `${product.slug || 'product'}-thumb.png`
+            a.click()
+          }}
+          className="px-3 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 text-sm"
+        >
+          יצירת Thumbnail
         </button>
       </div>
 
