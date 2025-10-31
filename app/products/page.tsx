@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Environment } from '@react-three/drei'
+import { OrbitControls, Environment, useGLTF, Center } from '@react-three/drei'
 import * as THREE from 'three'
 import { useRef, useState, useCallback } from 'react'
 import Link from 'next/link'
@@ -18,6 +18,33 @@ function SpinningProduct() {
       <meshStandardMaterial color="#64b5f6" metalness={0.2} roughness={0.4} />
     </mesh>
   )
+}
+
+function ProductModel({ path }: { path: string }) {
+  const group = useRef<THREE.Group>(null)
+  const gltf = useGLTF(path)
+  useFrame((_, dt) => {
+    if (group.current) group.current.rotation.y += dt * 0.2
+  })
+  return (
+    <group ref={group}>
+      <Center>
+        {/* Render the loaded GLTF scene */}
+        {/* @ts-ignore - drei's primitive typing */}
+        <primitive object={gltf.scene} />
+      </Center>
+    </group>
+  )
+}
+
+// Preload any known product models
+for (const p of products) {
+  if (p.modelPath) {
+    try {
+      // @ts-ignore
+      useGLTF.preload(p.modelPath)
+    } catch {}
+  }
 }
 
 function ProductViewer({ product }: { product: Product }) {
@@ -90,7 +117,11 @@ function ProductViewer({ product }: { product: Product }) {
             shadow-mapSize-height={1024}
           />
           <group position={[0, 0.5, 0]}>
-            <SpinningProduct />
+            {product.modelPath ? (
+              <ProductModel path={product.modelPath} />
+            ) : (
+              <SpinningProduct />
+            )}
           </group>
           <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, -0.01, 0]}>
             <planeGeometry args={[20, 20]} />
@@ -117,27 +148,34 @@ export default function ProductsPage() {
 
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {products.map((p) => (
-            <button
+            <div
               key={p.id}
-              onClick={() => setSelected(p)}
               className={`text-right border rounded-lg p-4 bg-zinc-900 hover:border-zinc-600 border-zinc-800 ${
                 selected.id === p.id ? 'ring-1 ring-blue-500' : ''
               }`}
             >
-              <div className="text-base font-medium mb-1 truncate">{p.name}</div>
-              <div className="text-sm text-zinc-400 truncate">
-                {p.price.amount} {p.price.currency}
-              </div>
-              {p.tags && (
-                <div className="mt-2 flex flex-wrap gap-1">
-                  {p.tags.map((t) => (
-                    <span key={t} className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
-                      {t}
-                    </span>
-                  ))}
+              <button onClick={() => setSelected(p)} className="block w-full text-left">
+                <div className="text-base font-medium mb-1 truncate">{p.name}</div>
+                <div className="text-sm text-zinc-400 truncate">
+                  {p.price.amount} {p.price.currency}
                 </div>
-              )}
-            </button>
+                {p.tags && (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {p.tags.map((t) => (
+                      <span key={t} className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </button>
+              <div className="mt-3 flex justify-between items-center">
+                <span className="text-xs text-zinc-400">צפייה מפורטת</span>
+                <Link href={`/products/${p.slug}`} className="text-sm text-blue-400 hover:text-blue-300">
+                  לעמוד המוצר →
+                </Link>
+              </div>
+            </div>
           ))}
         </section>
 
