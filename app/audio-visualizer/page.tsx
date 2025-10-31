@@ -52,7 +52,7 @@ export default function AudioVisualizerPage() {
     // TS lib mismatch: AnalyserNode expects Uint8Array<ArrayBuffer>
     // while our instance is inferred as Uint8Array<ArrayBufferLike>.
     // Cast to satisfy DOM signature across TS versions.
-    a.analyser.getByteFrequencyData(a.dataArray as unknown as Uint8Array)
+    a.analyser.getByteFrequencyData(a.dataArray as unknown as Uint8Array<ArrayBuffer>)
     return a.dataArray
   }, [])
 
@@ -67,7 +67,7 @@ export default function AudioVisualizerPage() {
       const source = ctx.createMediaElementSource(audioEl)
       const analyser = ctx.createAnalyser()
       analyser.fftSize = 128
-      const dataArray = new Uint8Array(analyser.frequencyBinCount) as unknown as Uint8Array
+      const dataArray = new Uint8Array(analyser.frequencyBinCount) as unknown as Uint8Array<ArrayBuffer>
       source.connect(analyser)
       analyser.connect(ctx.destination)
       audioRef.current = { ctx, source, analyser, dataArray, audioEl }
