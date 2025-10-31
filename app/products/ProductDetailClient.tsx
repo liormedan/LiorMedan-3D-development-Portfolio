@@ -38,7 +38,7 @@ function ProductModel({ path }: { path: string }) {
 }
 
 export default function ProductDetailClient({ product }: { product: Product }) {
-  const add = useCart((s) => s.add)
+  const add = useCart((s: any) => s.add)
   const [exporting, setExporting] = useState<'none' | 'gltf' | 'glb'>('none')
 
   const exportScene = async (binary: boolean) => {

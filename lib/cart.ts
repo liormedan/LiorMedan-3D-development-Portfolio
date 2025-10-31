@@ -1,6 +1,6 @@
 "use client"
 
-import create from 'zustand'
+import * as zustand from 'zustand'
 import { persist } from 'zustand/middleware'
 
 type CartItem = { productId: string; qty: number }
@@ -13,13 +13,15 @@ type CartState = {
   count: () => number
 }
 
-export const useCart = create<CartState>(
+const createCompat: any = (zustand as any).default ?? (zustand as any).create
+
+export const useCart = (createCompat as any)()(
   persist(
-    (set, get) => ({
+    (set: any, get: any) => ({
       items: [],
-      add: (productId, qty = 1) => {
-        set((state) => {
-          const idx = state.items.findIndex((i) => i.productId === productId)
+      add: (productId: string, qty: number = 1) => {
+        set((state: any) => {
+          const idx = state.items.findIndex((i: any) => i.productId === productId)
           if (idx >= 0) {
             const next = [...state.items]
             next[idx] = { ...next[idx], qty: next[idx].qty + qty }
@@ -28,9 +30,9 @@ export const useCart = create<CartState>(
           return { items: [...state.items, { productId, qty }] }
         })
       },
-      remove: (productId) => set((s) => ({ items: s.items.filter((i) => i.productId !== productId) })),
+      remove: (productId: string) => set((s: any) => ({ items: s.items.filter((i: any) => i.productId !== productId) })),
       clear: () => set({ items: [] }),
-      count: () => get().items.reduce((acc, i) => acc + i.qty, 0),
+      count: () => (get() as any).items.reduce((acc: number, i: any) => acc + i.qty, 0),
     }),
     {
       name: 'cart-v1',
@@ -43,7 +45,11 @@ export const useCart = create<CartState>(
             setItem: (name: string, value: string) => localStorage.setItem(name, value),
             removeItem: (name: string) => localStorage.removeItem(name),
           }
-        : undefined,
+        : {
+            getItem: (_: string) => null,
+            setItem: (_: string, __: string) => {},
+            removeItem: (_: string) => {},
+          },
       // keep only items
       // @ts-ignore
       partialize: (state: CartState) => ({ items: state.items }),
