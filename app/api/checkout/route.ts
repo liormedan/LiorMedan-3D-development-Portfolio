@@ -46,7 +46,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No valid items' }, { status: 400 })
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2024-06-20',
+      apiVersion: '2023-10-16',
     })
 
     const base = getBaseUrl(req)
