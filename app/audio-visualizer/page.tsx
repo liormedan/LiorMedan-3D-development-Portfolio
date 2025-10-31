@@ -49,7 +49,10 @@ export default function AudioVisualizerPage() {
   const getData = useCallback(() => {
     const a = audioRef.current
     if (!a) return null
-    a.analyser.getByteFrequencyData(a.dataArray)
+    // TS lib mismatch: AnalyserNode expects Uint8Array<ArrayBuffer>
+    // while our instance is inferred as Uint8Array<ArrayBufferLike>.
+    // Cast to satisfy DOM signature across TS versions.
+    a.analyser.getByteFrequencyData(a.dataArray as unknown as Uint8Array)
     return a.dataArray
   }, [])
 
@@ -64,7 +67,7 @@ export default function AudioVisualizerPage() {
       const source = ctx.createMediaElementSource(audioEl)
       const analyser = ctx.createAnalyser()
       analyser.fftSize = 128
-      const dataArray = new Uint8Array(analyser.frequencyBinCount)
+      const dataArray = new Uint8Array(analyser.frequencyBinCount) as unknown as Uint8Array
       source.connect(analyser)
       analyser.connect(ctx.destination)
       audioRef.current = { ctx, source, analyser, dataArray, audioEl }
@@ -111,4 +114,3 @@ export default function AudioVisualizerPage() {
     </main>
   )
 }
-
