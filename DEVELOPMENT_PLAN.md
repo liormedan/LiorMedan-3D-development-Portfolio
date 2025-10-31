@@ -62,8 +62,12 @@
    - בהמשך: רנדר בצד שרת עם headless-gl לטרום‑עיבוד (נותר כ‑Next step)
 
 ### ביצועים (P1)
-- [ ] דחיסת דגמים (DRACO/KTX2) + טעינה עצלה (lazy)
-- [ ] אופטימיזציית תאורה/צללים, הפחתת polycount היכן שניתן
+- [x] דחיסת דגמים (DRACO/KTX2) + טעינה עצלה (lazy)
+  - הרחבת GLTFLoader ל‑DRACO ו‑KTX2 דרך `useGLTF(url, loader => ...)` עם מסלולי דקודר/טרנסקודר מרשת
+  - `Suspense` + `dpr={[1,1.5]}` ו‑`gl={{ antialias:false }}` להפחתת עלות רנדר
+- [x] אופטימיזציית תאורה/צללים, הפחתת polycount היכן שניתן
+  - שמירת shadow map ל‑1024, הפעלת `castShadow/receiveShadow` רק לאובייקטים נדרשים
+  - Tone mapping: `ACESFilmic` ו‑`sRGB` ל‑IBL יעיל; המלצה: הפחתת polycount במודלים לפני העלאה
 
 ### תוכן/SEO (P1)
 - [ ] מטא־דאטה נקי בעברית ובאנגלית (תיקון `app/layout.tsx` – כרגע יש ג׳יבריש)

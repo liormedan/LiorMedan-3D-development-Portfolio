@@ -1,6 +1,6 @@
 "use client"
 
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Environment, useGLTF, Center, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { useRef, useState, useCallback, Suspense } from 'react'
@@ -22,7 +22,22 @@ function SpinningProduct() {
 
 function ProductModel({ path }: { path: string }) {
   const group = useRef<THREE.Group>(null)
-  const gltf = useGLTF(path)
+  const gl = useThree((s) => s.gl)
+  const gltf = useGLTF(path, (loader: any) => {
+    // Attach DRACO + KTX2 support for compressed geometry/textures
+    import('three/examples/jsm/loaders/DRACOLoader.js').then(({ DRACOLoader }) => {
+      const draco = new DRACOLoader()
+      // Use Google-hosted decoders to avoid bundling binaries
+      draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/')
+      loader.setDRACOLoader(draco)
+    })
+    import('three/examples/jsm/loaders/KTX2Loader.js').then(({ KTX2Loader }) => {
+      const ktx2 = new KTX2Loader()
+      ktx2.setTranscoderPath('https://unpkg.com/three@0.159.0/examples/jsm/libs/basis/')
+      ktx2.detectSupport(gl)
+      loader.setKTX2Loader(ktx2)
+    })
+  })
   useFrame((_, dt) => {
     if (group.current) group.current.rotation.y += dt * 0.2
   })
@@ -144,6 +159,8 @@ function ProductViewer({ product }: { product: Product }) {
       <div className="w-full aspect-[16/9] rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900">
         <Canvas
           shadows
+          dpr={[1, 1.5]}
+          gl={{ antialias: false }}
           camera={{ position: [3, 2, 4], fov: 50 }}
           onCreated={onCreated}
         >
