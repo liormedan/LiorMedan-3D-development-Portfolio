@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { products } from '@/lib/products'
+import { getVatPercent } from '@/lib/pricing'
 
 function getBaseUrl(req: Request) {
   const url = process.env.NEXT_PUBLIC_SITE_URL
@@ -22,10 +23,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No items provided' }, { status: 400 })
 
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = []
+    const vatRate = getVatPercent() / 100
     for (const it of items) {
       const p = products.find((x) => x.id === it.productId)
       if (!p) continue
-      const amount = Math.round(p.price.amount * 100)
+      const gross = p.price.amount * (1 + vatRate)
+      const amount = Math.round(gross * 100)
       line_items.push({
         quantity: Math.max(1, Math.floor(it.qty || 1)),
         price_data: {

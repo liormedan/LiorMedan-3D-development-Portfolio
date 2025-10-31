@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { useCart } from '@/lib/cart'
 import { products } from '@/lib/products'
+import { addVat, formatCurrency, getVatPercent } from '@/lib/pricing'
 
 export default function CartPage() {
   const { items, remove, clear } = useCart()
@@ -19,7 +20,9 @@ export default function CartPage() {
       .filter(Boolean) as Array<ReturnType<typeof products[number]> & { qty: number; total: number }>
   }, [items])
 
-  const total = rows.reduce((acc, r) => acc + r.total, 0)
+  const subtotal = rows.reduce((acc, r) => acc + r.total, 0)
+  const { vat, gross } = addVat(subtotal)
+  const vatPercent = getVatPercent()
 
   const checkout = async () => {
     if (rows.length === 0 || loading) return
@@ -63,11 +66,21 @@ export default function CartPage() {
                 </div>
               </div>
             ))}
-            <div className="flex items-center justify-between border-t border-zinc-800 pt-3">
-              <button onClick={clear} className="text-sm text-zinc-400 hover:text-white">ניקוי הסל</button>
-              <div className="text-right">
-                <div className="text-zinc-400 text-xs">סך הכל</div>
-                <div className="text-lg font-semibold">{total} {rows[0]?.price.currency}</div>
+            <div className="space-y-1 border-t border-zinc-800 pt-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-zinc-400">סכום ביניים</span>
+                <span>{formatCurrency(subtotal, rows[0]!.price.currency)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-zinc-400">מע"מ ({vatPercent}%)</span>
+                <span>{formatCurrency(vat, rows[0]!.price.currency)}</span>
+              </div>
+              <div className="flex items-center justify-between text-base font-semibold">
+                <span>לתשלום (כולל מע"מ)</span>
+                <span>{formatCurrency(gross, rows[0]!.price.currency)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <button onClick={clear} className="text-sm text-zinc-400 hover:text-white">ניקוי הסל</button>
               </div>
             </div>
             <div className="flex justify-end">
@@ -85,4 +98,3 @@ export default function CartPage() {
     </main>
   )
 }
-
