@@ -158,7 +158,10 @@ export default function ProductsPage() {
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">מוצרים בתלת־ממד</h1>
-          <Link href="/" className="text-sm text-zinc-300 hover:text-white">חזרה לדף הבית</Link>
+          <div className="flex items-center gap-4">
+            <Link href="/cart" className="text-sm text-zinc-300 hover:text-white">לסל</Link>
+            <Link href="/" className="text-sm text-zinc-300 hover:text-white">חזרה לדף הבית</Link>
+          </div>
         </div>
 
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -34,7 +34,11 @@
   - DRACO: יתווסף בשלב הבא לצרכי טעינה/דחיסה; נדרש אינטגרציית דקודר בלואדר או Preprocess
 
 ### תשלום וקופה (P0-P1)
-- [ ] אינטגרציית תשלום (Stripe Checkout/Payment Links) – Sandbox תחילה
+- [x] אינטגרציית תשלום (Stripe Checkout/Payment Links) – Sandbox תחילה
+  - נוספה חבילת `stripe` ל-`package.json`
+  - API: `app/api/checkout/route.ts` יוצר Checkout Session לפי פריטי סל
+  - עמוד סל: `app/cart/page.tsx` עם כפתור "לתשלום ב‑Stripe"
+  - קובץ סביבה: `STRIPE_SECRET_KEY` ב-`.env.example`, שימוש ב-`NEXT_PUBLIC_SITE_URL` לבניית כתובות חזרה
 - [ ] עמוד Checkout + אישור הזמנה (Success/Cancel)
 - [ ] תמחור מטבע/מע״מ/חשבונית (פשטני בשלב ראשון)
 
