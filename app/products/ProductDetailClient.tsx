@@ -97,15 +97,15 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             onClick={() => add(product.id, 1)}
             className="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500"
           >
-            הוספה לסל
+            Add to Cart
           </button>
-          <Link href="/products" className="text-sm text-zinc-300 hover:text-white">חזרה לרשימה</Link>
+          <Link href="/products" className="text-sm text-zinc-300 hover:text-white">Back to Products</Link>
         </div>
       </div>
 
       <div className="w-full aspect-[16/9] rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900">
         <Canvas id="product-detail-canvas" shadows dpr={[1, 1.5]} gl={{ antialias: false }} camera={{ position: [3, 2, 4], fov: 50 }}>
-          <Suspense fallback={<Html center style={{ color: '#cbd5e1' }}>טוען מודל…</Html>}>
+          <Suspense fallback={<Html center style={{ color: '#cbd5e1' }}>Loading scene…</Html>}>
             <color attach="background" args={[0.05, 0.05, 0.06]} />
             <ambientLight intensity={0.5} />
             <directionalLight position={[5, 5, 5]} intensity={1.2} castShadow />
@@ -125,7 +125,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
       <div className="flex items-center gap-2 justify-end">
         {product.modelPath && (
           <a href={product.modelPath} download className="px-3 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 text-sm">
-            הורדת קובץ מקור
+            Download Model
           </a>
         )}
         <button
@@ -133,14 +133,14 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           disabled={exporting !== 'none'}
           className="px-3 py-2 rounded-md bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-sm"
         >
-          {exporting === 'gltf' ? 'מייצא…' : 'ייצוא כ‑GLTF'}
+          {exporting === 'gltf' ? 'Exporting…' : 'Export GLTF'}
         </button>
         <button
           onClick={() => exportScene(true)}
           disabled={exporting !== 'none'}
           className="px-3 py-2 rounded-md bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-sm"
         >
-          {exporting === 'glb' ? 'מייצא…' : 'ייצוא כ‑GLB'}
+          {exporting === 'glb' ? 'Exporting…' : 'Export GLB'}
         </button>
         <div className="flex items-center gap-2">
           <button
@@ -163,7 +163,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             }}
             className="px-3 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 text-sm"
           >
-            יצירת Thumbnail
+            Save Thumbnail
           </button>
         </div>
       </div>
@@ -182,3 +182,4 @@ export default function ProductDetailClient({ product }: { product: Product }) {
     </div>
   )
 }
+
