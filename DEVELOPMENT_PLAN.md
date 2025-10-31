@@ -24,7 +24,9 @@
   - `/products` מציג גריד מוצרים וקישור לעמודי מוצר
   - עמוד דינמי: `/products/[slug]` + רכיב לקוח להצגת 3D ופרטים
   - חנות: Zustand לסל (`lib/cart.ts`) וכפתור "הוספה לסל"
-- [ ] סל קניות בצד לקוח (zustand) עם שמירה ב-`localStorage`
+- [x] סל קניות בצד לקוח (zustand) עם שמירה ב-`localStorage`
+  - נוספה התמדה עם `zustand/middleware` (`persist`) ב-`lib/cart.ts` תחת המפתח `cart-v1`
+  - שמירת `items` ל-`localStorage` וטעינה אוטומטית בהידרציה בצד לקוח
 - [ ] ייצוא/הורדה: הורדת הדגם הספציפי של המוצר (GLTF/GLB); תמיכה ב-DRACO בהמשך
 
 ### תשלום וקופה (P0-P1)
