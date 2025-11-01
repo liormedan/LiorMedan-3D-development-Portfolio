@@ -2,6 +2,7 @@
 
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
+import RightSidebar from '@/components/RightSidebar'
 import { EffectComposer, Bloom, ChromaticAberration, Vignette } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
 import * as THREE from 'three'
@@ -401,109 +402,93 @@ export default function AudioVisualizerPage() {
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <h1 className="text-2xl font-semibold">Audio Visualizer</h1>
-          <label className="inline-flex items-center gap-3 cursor-pointer">
-            <span className="text-sm text-zinc-300">Load audio (MP3/WAV)</span>
-            <input
-              type="file"
-              accept="audio/*"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0]
-                if (f) onFile(f)
-              }}
-            />
-            <span className="px-4 py-2 rounded-md bg-purple-600 hover:bg-purple-500">Choose file</span>
-          </label>
         </div>
 
-        <div className="flex items-center gap-4 flex-wrap text-sm">
-          <div className="flex items-center gap-2">
-            <span className="text-zinc-400">Mode</span>
-            <select
-              className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1"
-              value={mode}
-              onChange={(e) => setMode(e.target.value as Mode)}
-            >
-              <option value="frequency">Frequency</option>
-              <option value="time">Time Domain</option>
-            </select>
+        <div className="flex flex-col md:flex-row gap-6 text-sm">
+          <div className="flex-1">
+            <div className="hidden md:block h-0" />
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-zinc-400">Bars</span>
-            <input
-              type="range"
-              min={16}
-              max={192}
-              step={1}
-              value={barsCount}
-              onChange={(e) => setBarsCount(parseInt(e.target.value))}
-            />
-            <span className="tabular-nums w-10 text-right">{barsCount}</span>
-          </div>
-        <div className="flex items-center gap-2">
-          <span className="text-zinc-400">Theme</span>
-          <select
-            className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1"
-            value={theme}
-            onChange={(e) => setTheme(e.target.value as Theme)}
-          >
-            <option value="cool">Cool</option>
-            <option value="warm">Warm</option>
-            <option value="rainbow">Rainbow</option>
-            <option value="mono">Mono</option>
-          </select>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-zinc-400">View Mode</span>
-          <select
-            className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1"
-            value={viewMode}
-            onChange={(e) => setViewMode(e.target.value as 'bars' | 'circle')}
-          >
-            <option value="bars">Bars</option>
-            <option value="circle">Circular</option>
-          </select>
-        </div>
-          <div className="flex items-center gap-2">
-            <span className="text-zinc-400">Quantize</span>
-            <select
-              className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1"
-              value={quantDiv}
-              onChange={(e) => setQuantDiv(Number(e.target.value) as 1 | 2 | 4)}
-            >
-              <option value={1}>1/1</option>
-              <option value={2}>1/2</option>
-              <option value={4}>1/4</option>
-            </select>
-            <button
-              className="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700"
-              onClick={() => { const a = audioRef.current; if (a) setBeatOffset(a.audioEl.currentTime || 0) }}
-              disabled={!audioRef.current}
-              title="Align downbeat"
-            >Align</button>
-            {bpm && (
-              <div className="flex items-center gap-1">
-                <button className="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700" onClick={() => setBpm((v) => v ? Math.max(40, Math.round(v / 2)) : v)}>÷2</button>
-                <span className="text-zinc-400">BPM {bpm}</span>
-                <button className="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700" onClick={() => setBpm((v) => v ? Math.min(240, v * 2) : v)}>×2</button>
+          <RightSidebar>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="text-xs uppercase tracking-wide text-zinc-400">File</div>
+                <label className="inline-flex items-center gap-3 cursor-pointer">
+                  <span className="px-4 py-2 rounded-md bg-purple-600 hover:bg-purple-500">Choose file</span>
+                  <input
+                    type="file"
+                    accept="audio/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = (e.target as HTMLInputElement).files?.[0]
+                      if (f) onFile(f)
+                    }}
+                  />
+                </label>
               </div>
-            )}
-          </div>
-          <label className="inline-flex items-center gap-2">
-            <input type="checkbox" className="accent-purple-500" checked={useBloom} onChange={(e) => setUseBloom(e.target.checked)} />
-            <span className="text-zinc-400">Bloom</span>
-          </label>
-          <div className="flex items-center gap-2">
-            <span className="text-zinc-400">Trail</span>
-            <input
-              type="range"
-              min={0}
-              max={0.3}
-              step={0.01}
-              value={trailLerp}
-              onChange={(e) => setTrailLerp(parseFloat(e.target.value))}
-            />
-          </div>
+              <div className="space-y-2">
+                <div className="text-xs uppercase tracking-wide text-zinc-400">View</div>
+                <div className="flex items-center gap-2">
+                  <span className="text-zinc-400">Mode</span>
+                  <select className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1" value={mode} onChange={(e)=>setMode(e.target.value as Mode)}>
+                    <option value="frequency">Frequency</option>
+                    <option value="time">Time Domain</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-zinc-400">Bars</span>
+                  <div className="flex items-center gap-2 w-40">
+                    <input type="range" min={16} max={192} step={1} value={barsCount} onChange={(e)=>setBarsCount(parseInt(e.target.value))} className="flex-1" />
+                    <span className="tabular-nums w-8 text-right">{barsCount}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-zinc-400">Theme</span>
+                  <select className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1" value={theme} onChange={(e)=>setTheme(e.target.value as Theme)}>
+                    <option value="cool">Cool</option>
+                    <option value="warm">Warm</option>
+                    <option value="rainbow">Rainbow</option>
+                    <option value="mono">Mono</option>
+                  </select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-zinc-400">View Mode</span>
+                  <select className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1" value={viewMode} onChange={(e)=>setViewMode(e.target.value as 'bars'|'circle')}>
+                    <option value="bars">Bars</option>
+                    <option value="circle">Circular</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="text-xs uppercase tracking-wide text-zinc-400">Quantize</div>
+                <div className="flex items-center gap-2">
+                  <select className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1" value={quantDiv} onChange={(e)=>setQuantDiv(Number(e.target.value) as 1|2|4)}>
+                    <option value={1}>1/1</option>
+                    <option value={2}>1/2</option>
+                    <option value={4}>1/4</option>
+                  </select>
+                  <button className="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700" onClick={()=>{const a=audioRef.current;if(a)setBeatOffset(a.audioEl.currentTime||0)}} disabled={!audioRef.current}>Align</button>
+                  {bpm && (
+                    <div className="flex items-center gap-1">
+                      <button className="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700" onClick={()=>setBpm(v=>v?Math.max(40,Math.round(v/2)):v)}>÷2</button>
+                      <span className="text-zinc-400">BPM {bpm}</span>
+                      <button className="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700" onClick={()=>setBpm(v=>v?Math.min(240,v*2):v)}>×2</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="text-xs uppercase tracking-wide text-zinc-400">Playback</div>
+                <button className="px-3 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 w-full" onClick={togglePlay} disabled={!audioRef.current}>{isPlaying?'Pause':'Play'}</button>
+                <div className="flex items-center gap-2">
+                  <span className="text-zinc-400">Vol</span>
+                  <input type="range" min={0} max={1} step={0.01} value={volume} onChange={(e)=>onVolumeChange(parseFloat(e.target.value))} className="w-full" />
+                </div>
+              </div>
+
+            </div>
+          </RightSidebar>
         </div>
 
         <div

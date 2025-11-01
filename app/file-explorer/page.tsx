@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber'
 import { Html, OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import RightSidebar from '@/components/RightSidebar'
 
 type DirHandle = any // FileSystemDirectoryHandle (typed as any for cross-browser)
 type EntryHandle = any // FileSystemFileHandle | FileSystemDirectoryHandle
@@ -137,56 +138,6 @@ export default function FileExplorer3D() {
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center gap-4 flex-wrap justify-between">
           <h1 className="text-2xl font-semibold">File Explorer 3D</h1>
-          <div className="flex items-center gap-3">
-            <button onClick={pickDirectory} className="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500">
-              Pick Directory
-            </button>
-            <label className="px-4 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 cursor-pointer">
-              Pick Files / Directory
-              <input
-                type="file"
-                multiple
-                className="hidden"
-                // @ts-ignore - vendor attribute for directory picking fallback
-                webkitdirectory
-                directory
-                onChange={(e) => pickFilesFallback(e.target.files)}
-              />
-            </label>
-            <button
-              onClick={goUp}
-              disabled={crumbs.length <= 1}
-              className={`px-3 py-2 rounded-md ${
-                crumbs.length <= 1
-                  ? 'bg-zinc-700/40 cursor-not-allowed opacity-60'
-                  : 'bg-zinc-800 hover:bg-zinc-700'
-              }`}
-              title={crumbs.length <= 1 ? 'Already at root' : 'Go up'}
-            >
-              Up
-            </button>
-            <input
-              type="text"
-              placeholder="Search by name..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="px-3 py-2 rounded-md bg-zinc-900 border border-zinc-800 text-sm"
-            />
-            <div className="flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-md p-1">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`px-3 py-1 rounded ${viewMode === 'grid' ? 'bg-zinc-800' : ''}`}
-              >
-                3D Grid
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`px-3 py-1 rounded ${viewMode === 'list' ? 'bg-zinc-800' : ''}`}
-              >
-                List
-              </button>
-            </div>
-          </div>
         </div>
         <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-3">
           <div className="text-xs uppercase tracking-wide text-zinc-400 mb-2">Tree (current)</div>
@@ -236,49 +187,66 @@ export default function FileExplorer3D() {
             <span className="text-zinc-500">• {filteredItems.length} items</span>
           )}
         </div>
-        {viewMode === 'grid' ? (
-          <div className="w-full aspect-[16/9] rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900">
-            <Canvas shadows camera={{ position: [4, 4, 8], fov: 50 }}>
-              <color attach="background" args={[0.05, 0.05, 0.06]} />
-              <ambientLight intensity={0.5} />
-              <directionalLight position={[4, 6, 3]} intensity={1.2} castShadow />
-              <Grid items={filteredItems} onOpen={openItem} />
-              <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} receiveShadow>
-                <planeGeometry args={[50, 50]} />
-                <meshStandardMaterial color="#111" />
-              </mesh>
-              <OrbitControls makeDefault />
-            </Canvas>
-          </div>
-        ) : (
-          <div className="w-full rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900">
-            <ul className="divide-y divide-zinc-800">
-              {filteredItems.map((it, i) => (
-                <li key={i} className="flex items-center justify-between px-4 py-2 hover:bg-zinc-800/50">
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`inline-block w-2.5 h-2.5 rounded-full ${
-                        it.kind === 'directory' ? 'bg-emerald-400' : 'bg-blue-400'
-                      }`}
-                    />
-                    <span className="truncate max-w-[60vw]">{it.name}</span>
-                  </div>
-                  {it.kind === 'directory' && (
-                    <button
-                      className="text-xs px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 border border-zinc-700"
-                      onClick={() => openItem(it)}
-                    >
-                      Open
-                    </button>
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex-1">
+            {viewMode === 'grid' ? (
+              <div className="w-full aspect-[16/9] rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900">
+                <Canvas shadows camera={{ position: [4, 4, 8], fov: 50 }}>
+                  <color attach="background" args={[0.05, 0.05, 0.06]} />
+                  <ambientLight intensity={0.5} />
+                  <directionalLight position={[4, 6, 3]} intensity={1.2} castShadow />
+                  <Grid items={filteredItems} onOpen={openItem} />
+                  <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} receiveShadow>
+                    <planeGeometry args={[50, 50]} />
+                    <meshStandardMaterial color="#111" />
+                  </mesh>
+                  <OrbitControls makeDefault />
+                </Canvas>
+              </div>
+            ) : (
+              <div className="w-full rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900">
+                <ul className="divide-y divide-zinc-800">
+                  {filteredItems.map((it, i) => (
+                    <li key={i} className="flex items-center justify-between px-4 py-2 hover:bg-zinc-800/50">
+                      <div className="flex items-center gap-3">
+                        <span className={`inline-block w-2.5 h-2.5 rounded-full ${it.kind === 'directory' ? 'bg-emerald-400' : 'bg-blue-400'}`} />
+                        <span className="truncate max-w-[60vw]">{it.name}</span>
+                      </div>
+                      {it.kind === 'directory' && (
+                        <button className="text-xs px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 border border-zinc-700" onClick={() => openItem(it)}>Open</button>
+                      )}
+                    </li>
+                  ))}
+                  {filteredItems.length === 0 && (
+                    <li className="px-4 py-6 text-sm text-zinc-400">No items match your search.</li>
                   )}
-                </li>
-              ))}
-              {filteredItems.length === 0 && (
-                <li className="px-4 py-6 text-sm text-zinc-400">No items match your search.</li>
-              )}
-            </ul>
+                </ul>
+              </div>
+            )}
           </div>
-        )}
+          <RightSidebar title="Controls">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="text-xs uppercase tracking-wide text-zinc-400">Browse</div>
+                <button onClick={pickDirectory} className="w-full px-3 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500">Pick Directory</button>
+                <label className="w-full inline-flex items-center gap-2 cursor-pointer">
+                  <span className="px-3 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700">Pick Files / Directory</span>
+                  {/* @ts-ignore vendor attrs supported in Chromium for folder selection */}
+                  <input type="file" multiple className="hidden" webkitdirectory directory onChange={(e)=>pickFilesFallback(e.target.files)} />
+                </label>
+                <button onClick={goUp} disabled={crumbs.length<=1} className={`w-full px-3 py-2 rounded-md ${crumbs.length<=1?'bg-zinc-700/40 cursor-not-allowed opacity-60':'bg-zinc-800 hover:bg-zinc-700'}`}>Up</button>
+              </div>
+              <div className="space-y-2">
+                <div className="text-xs uppercase tracking-wide text-zinc-400">Filter</div>
+                <input type="text" placeholder="Search by name..." value={search} onChange={(e)=>setSearch(e.target.value)} className="w-full px-3 py-2 rounded-md bg-zinc-900 border border-zinc-800 text-sm" />
+                <div className="flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-md p-1">
+                  <button onClick={()=>setViewMode('grid')} className={`px-3 py-1 rounded ${viewMode==='grid'?'bg-zinc-800':''}`}>3D Grid</button>
+                  <button onClick={()=>setViewMode('list')} className={`px-3 py-1 rounded ${viewMode==='list'?'bg-zinc-800':''}`}>List</button>
+                </div>
+              </div>
+            </div>
+          </RightSidebar>
+        </div>
         <p className="text-sm text-zinc-400">
           Use the native Directory Picker for best results. Fallback input allows picking folders in Chromium via webkitdirectory.
           Click green cubes to enter folders. Use the breadcrumb to navigate back.
