@@ -1,6 +1,6 @@
 "use client"
 
-import * as zustand from 'zustand'
+import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
 type CartItem = { productId: string; qty: number }
@@ -13,9 +13,7 @@ type CartState = {
   count: () => number
 }
 
-const createCompat: any = (zustand as any).default ?? (zustand as any).create
-
-export const useCart = (createCompat as any)()(
+export const useCart = (create as any)()(
   persist(
     (set: any, get: any) => ({
       items: [],

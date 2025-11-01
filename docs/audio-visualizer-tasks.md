@@ -63,13 +63,15 @@
 
   ביצוע: Codex · תאריך: 2025-10-31 · קבצים: `app/audio-visualizer/page.tsx`
 - [ ] מצבי תצוגה נוספים
-  - [ ] Circular Waveform
+  - [x] Circular Waveform
   - [ ] Spectral Terrain (מיפוי FFT למשטח)
   - [ ] Particles מגיבים לבס/טרבל
-- [ ] Postprocessing נוסף
-  - [ ] Chromatic Aberration עדין
-  - [ ] Vignette רך
-  - [ ] Tone Mapping לפי Theme
+- [x] Postprocessing נוסף
+  - [x] Chromatic Aberration עדין
+  - [x] Vignette רך
+  - [x] Tone Mapping לפי Theme
+  
+  ביצוע: Codex · תאריך: 2025-10-31 · קבצים: `app/audio-visualizer/page.tsx`
 - [ ] Presets ניתנים לשמירה/טעינה
   - [ ] שמירה מקומית (localStorage)
   - [ ] ייבוא/ייצוא JSON של preset
